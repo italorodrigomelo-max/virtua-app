@@ -642,6 +642,14 @@ async function inscrever() {
   st.inscritoId = data.id;
   st.inscrito = data;
   toast('Inscrição confirmada! #' + data.numero_peito, 'ok');
+  // Salvar no localStorage para retomada
+  localStorage.setItem('virtua_inscrito', JSON.stringify({
+    inscritoId: data.id,
+    inscrito: data,
+    provaId: st.provaId,
+    prova: st.prova,
+    dist: st.dist
+  }));
   // Dispara email de confirmação
   enviarEmailConfirmacao(data, st.prova);
   irParaEspera();
@@ -1095,8 +1103,37 @@ const savedUrl = 'https://eunveqhvhvqhthyltwpg.supabase.co';
 const savedKey = 'sb_publishable_afgKcEYng4Z4OVjmv2ZfBw_FqOFhMMA';
 sb = supabase.createClient(savedUrl, savedKey);
 st.sbUrl = savedUrl; st.sbKey = savedKey;
-showScreen('s-inscricao');
-carregarProvas();
+
+// Verificar se já tem inscrição salva (retomada após sair da página)
+const saved = localStorage.getItem('virtua_inscrito');
+if (saved) {
+  try {
+    const dados = JSON.parse(saved);
+    const provaLargada = new Date(dados.prova.data_hora_largada).getTime();
+    const agora = Date.now();
+    // Se a prova ainda não passou (menos de 3h do horário de largada)
+    if (provaLargada - agora > -3 * 60 * 60 * 1000) {
+      st.inscritoId = dados.inscritoId;
+      st.inscrito = dados.inscrito;
+      st.provaId = dados.provaId;
+      st.prova = dados.prova;
+      st.dist = dados.dist;
+      irParaEspera();
+    } else {
+      // Prova já passou, limpar
+      localStorage.removeItem('virtua_inscrito');
+      showScreen('s-inscricao');
+      carregarProvas();
+    }
+  } catch(e) {
+    localStorage.removeItem('virtua_inscrito');
+    showScreen('s-inscricao');
+    carregarProvas();
+  }
+} else {
+  showScreen('s-inscricao');
+  carregarProvas();
+}
 
 // easter egg admin: toque logo 5x
 let logoTaps = 0, logoTapT;
