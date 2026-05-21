@@ -956,27 +956,33 @@ function mostrarResultado() {
 }
 
 async function enviarEmailConfirmacao(inscrito, prova) {
-  if (!inscrito?.email || !st.sbUrl) return;
+  if (!inscrito?.email) return;
+  const EDGE_URL = 'https://eunveqhvhvqhthyltwpg.supabase.co/functions/v1/send-email';
+  const ANON_KEY = 'sb_publishable_afgKcEYng4Z4OVjmv2ZfBw_FqOFhMMA';
   try {
-    await fetch(st.sbUrl + '/functions/v1/send-email', {
+    const payload = {
+      type: 'confirmacao',
+      email: inscrito.email,
+      nome: inscrito.nome,
+      numeroPeito: inscrito.numero_peito,
+      distancia: st.dist + 'K',
+      provaId: st.provaId,
+      datahora: prova?.data_hora_largada || '',
+      cidade: inscrito.cidade,
+      local: inscrito.local
+    };
+    console.log('Enviando email confirmacao:', payload);
+    const res = await fetch(EDGE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + st.sbKey
+        'apikey': ANON_KEY,
+        'Authorization': 'Bearer ' + ANON_KEY
       },
-      body: JSON.stringify({
-        type: 'confirmacao',
-        email: inscrito.email,
-        nome: inscrito.nome,
-        numeroPeito: inscrito.numero_peito,
-        distancia: st.dist + 'K',
-        provaId: st.provaId,
-        datahora: prova?.data_hora_largada || '',
-        cidade: inscrito.cidade,
-        local: inscrito.local
-      })
+      body: JSON.stringify(payload)
     });
-    console.log('Email confirmacao enviado');
+    const data = await res.json();
+    console.log('Resposta email:', data);
   } catch(e) {
     console.error('Erro email confirmacao:', e);
   }
@@ -990,9 +996,11 @@ async function enviarEmailMedalha() {
     statusEl.style.display = 'none'; return;
   }
   try {
-    const resp = await fetch(st.sbUrl + '/functions/v1/send-email', {
+    const EDGE_URL = 'https://eunveqhvhvqhthyltwpg.supabase.co/functions/v1/send-email';
+    const ANON_KEY = 'sb_publishable_afgKcEYng4Z4OVjmv2ZfBw_FqOFhMMA';
+    const resp = await fetch(EDGE_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + st.sbKey },
+      headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
       body: JSON.stringify({
         type: 'medalha',
         email: st.inscrito.email,
