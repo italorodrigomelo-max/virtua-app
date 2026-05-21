@@ -679,19 +679,39 @@ function iniciarCountdown() {
     const now = Date.now();
     const largada = new Date(st.prova.data_hora_largada).getTime();
     const diff = Math.max(0, largada - now);
-    const totalSecs = Math.ceil(diff / 1000);
-    const mins = Math.floor(totalSecs / 60);
-    const secs = totalSecs % 60;
-    el.textContent = mins + ':' + String(secs).padStart(2, '0');
-    el.classList.toggle('soon', diff < 60000 && diff > 0);
-    if (diff < 5000 && diff > 0) sub.textContent = 'PREPARE-SE!';
-    else if (diff === 0 || diff < 1000) {
+
+    if (diff === 0) {
+      el.textContent = 'VAI!';
+      el.classList.add('soon');
+      sub.textContent = 'LARGADA!';
       clearInterval(st.countdown_iv);
       iniciarLargada();
-    } else {
-      sub.textContent = diff < 300000 ? 'QUASE NA HORA!' : 'AGUARDE A LARGADA SINCRONIZADA';
+      return;
     }
+
+    const totalSecs = Math.floor(diff / 1000);
+    const dias  = Math.floor(totalSecs / 86400);
+    const horas = Math.floor((totalSecs % 86400) / 3600);
+    const mins  = Math.floor((totalSecs % 3600) / 60);
+    const secs  = totalSecs % 60;
+
+    let linhas = [];
+    if (dias > 0)  linhas.push(dias  + (dias  === 1 ? ' dia'    : ' dias'));
+    if (horas > 0) linhas.push(horas + (horas === 1 ? ' hora'   : ' horas'));
+    if (mins > 0)  linhas.push(mins  + (mins  === 1 ? ' minuto' : ' minutos'));
+    if (dias === 0) linhas.push(String(secs).padStart(2,'0') + 's');
+
+    el.style.whiteSpace = 'pre-line';
+    el.style.fontSize = dias > 0 ? '28px' : horas > 0 ? '32px' : mins > 0 ? '38px' : '52px';
+    el.style.lineHeight = '1.4';
+    el.textContent = linhas.join('\n');
+    el.classList.toggle('soon', diff < 60000);
+
+    if (diff < 60000)       sub.textContent = 'PREPARE-SE!';
+    else if (diff < 300000) sub.textContent = 'QUASE NA HORA!';
+    else                    sub.textContent = 'AGUARDE A LARGADA SINCRONIZADA';
   }
+
   tick();
   st.countdown_iv = setInterval(tick, 1000);
 }
@@ -971,7 +991,8 @@ async function enviarEmailConfirmacao(inscrito, prova) {
       cidade: inscrito.cidade,
       local: inscrito.local
     };
-    console.log('Enviando email confirmacao:', payload);
+    console.log('Enviando email confirmacao para:', inscrito.email);
+    console.log('Payload:', JSON.stringify(payload));
     const res = await fetch(EDGE_URL, {
       method: 'POST',
       headers: {
