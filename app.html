@@ -758,8 +758,24 @@ function iniciarGPS() {
   if (!navigator.geolocation) {
     dot.className = 'gps-dot ok'; txt.textContent = 'GPS não disponível · modo simulado'; st.gpsOk = true; return;
   }
+  let lastPos = null;
   st.watchId = navigator.geolocation.watchPosition(
-    p => { dot.className = 'gps-dot ok'; txt.textContent = 'GPS ativo · precisão ' + Math.round(p.coords.accuracy) + 'm'; st.gpsOk = true; },
+    p => {
+      dot.className = 'gps-dot ok';
+      txt.textContent = 'GPS ativo · precisão ' + Math.round(p.coords.accuracy) + 'm';
+      st.gpsOk = true;
+      // Calcular distância real durante a corrida
+      if (st.correndo && lastPos) {
+        const d = calcularDistanciaGPS(
+          lastPos.coords.latitude, lastPos.coords.longitude,
+          p.coords.latitude, p.coords.longitude
+        );
+        if (d > 0.001 && d < 0.1) { // filtro anti-ruído: entre 1m e 100m por leitura
+          st.km = Math.min(st.km + d, st.dist);
+        }
+      }
+      lastPos = p;
+    },
     () => { dot.className = 'gps-dot searching'; txt.textContent = 'GPS indisponível · modo simulado'; st.gpsOk = true; },
     { enableHighAccuracy: true, timeout: 8000 }
   );
@@ -812,6 +828,7 @@ function iniciarCorrida() {
   st.correndo = true;
   st.startTime = Date.now();
   st.km = 0;
+  st.chegou = false;
   const meuPaceBase = 5.0 + Math.random() * 1.2;
   document.getElementById('corrida-info').textContent = st.dist + 'K · EM ANDAMENTO';
   document.getElementById('progress-total').textContent = st.dist + 'km';
@@ -820,15 +837,18 @@ function iniciarCorrida() {
 
   st.corrida_iv = setInterval(async () => {
     const elapsed = (Date.now() - st.startTime) / 1000;
-    // cronômetro
+    // cronômetro — sempre baseado no tempo real
     const m = Math.floor(elapsed / 60), s = Math.floor(elapsed % 60);
     document.getElementById('cronometro').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 
-    // avança usuário
-    const speedKmSec = 1 / ((meuPaceBase + (Math.random() - 0.5) * 0.3) * 60);
-    st.km = Math.min(st.km + speedKmSec, st.dist);
+    // avança usuário — SÓ simula se GPS não disponível
+    if (!st.gpsOk || st.local === 'esteira') {
+      const speedKmSec = 1 / ((meuPaceBase + (Math.random() - 0.5) * 0.3) * 60);
+      st.km = Math.min(st.km + speedKmSec, st.dist);
+    }
+    // pace sempre calculado pelo tempo real e distância real
     st.bpm = Math.max(130, Math.min(188, st.bpm + Math.floor((Math.random() - 0.48) * 3)));
-    if (elapsed > 2) st.pace = elapsed / (st.km * 60) || 0;
+    if (elapsed > 2 && st.km > 0) st.pace = elapsed / (st.km * 60) || 0;
 
     // displays
     document.getElementById('km-display').textContent = st.km.toFixed(2);
@@ -849,10 +869,12 @@ function iniciarCorrida() {
     renderRanking();
 
     // chegada
-    if (st.km >= st.dist) {
+    if (st.km >= st.dist && !st.chegou) {
+      st.chegou = true;
       clearInterval(st.corrida_iv);
       st.correndo = false;
       if (!demoMode) await publicarPosicao(true);
+      localStorage.removeItem('virtua_inscrito');
       setTimeout(mostrarResultado, 500);
     }
   }, 500);
@@ -1084,6 +1106,16 @@ async function carregarPorLink(inscritoId, provaId) {
     showScreen('s-inscricao');
     carregarProvas();
   }
+}
+
+function calcularDistanciaGPS(lat1, lon1, lat2, lon2) {
+  const R = 6371; // raio da Terra em km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
 function cancelarInscricao() {
