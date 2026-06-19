@@ -581,7 +581,15 @@ function renderProvas(provas) {
   const el = document.getElementById('provas-lista');
   el.style.display = 'block';
   el.innerHTML = '';
-  provas.forEach(p => {
+
+  // guardar todas as provas no state
+  st.todasProvas = provas;
+
+  // mostrar uma prova por distância — a mais próxima de cada
+  const prova5k = provas.find(p => p.distancia === 5);
+  const prova10k = provas.find(p => p.distancia === 10);
+
+  [prova5k, prova10k].filter(Boolean).forEach(p => {
     const dt = new Date(p.data_hora_largada);
     const dateStr = dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
     const timeStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -598,9 +606,12 @@ function renderProvas(provas) {
     div.onclick = () => selecionarProva(p, div);
     el.appendChild(div);
   });
+
   document.getElementById('form-inscricao').style.display = 'block';
-  // seleciona primeira automaticamente
-  selecionarProva(provas[0], document.getElementById('prova-card-' + provas[0].id));
+
+  // seleciona a primeira disponível automaticamente
+  const primeira = prova5k || prova10k;
+  if (primeira) selecionarProva(primeira, document.getElementById('prova-card-' + primeira.id));
 }
 
 function selecionarProva(prova, cardEl) {
