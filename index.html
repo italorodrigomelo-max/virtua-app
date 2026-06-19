@@ -427,49 +427,60 @@
 <section class="provas-section" id="provas">
   <div class="section-label">Provas disponíveis</div>
   <h2 class="section-title">ESCOLHA<br>SUA DISTÂNCIA.</h2>
-  <div class="provas-grid">
-    <div class="prova-card">
-      <div class="prova-badge">Em breve</div>
-      <div class="prova-dist">5K</div>
-      <div class="prova-name">Corrida Virtual</div>
-      <div class="prova-details">
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Data</div>
-          <div class="prova-detail-val">Sábado</div>
-        </div>
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Largada</div>
-          <div class="prova-detail-val">08:00</div>
-        </div>
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Inscrições</div>
-          <div class="prova-detail-val">Abertas</div>
-        </div>
-      </div>
-      <a href="/app.html" class="prova-btn">Inscreva-se</a>
-    </div>
-    <div class="prova-card">
-      <div class="prova-badge">Em breve</div>
-      <div class="prova-dist">10K</div>
-      <div class="prova-name">Corrida Virtual</div>
-      <div class="prova-details">
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Data</div>
-          <div class="prova-detail-val">Domingo</div>
-        </div>
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Largada</div>
-          <div class="prova-detail-val">07:00</div>
-        </div>
-        <div class="prova-detail-item">
-          <div class="prova-detail-label">Inscrições</div>
-          <div class="prova-detail-val">Abertas</div>
-        </div>
-      </div>
-      <a href="/app.html" class="prova-btn">Inscreva-se</a>
-    </div>
+  <div class="provas-grid" id="provas-grid">
+    <div style="color:#888;font-size:13px;letter-spacing:2px;padding:20px 0">CARREGANDO PROVAS...</div>
   </div>
 </section>
+<script>
+(async function() {
+  try {
+    const res = await fetch('https://eunveqhvhvqhthyltwpg.supabase.co/rest/v1/provas?select=*&status=in.(inscricoes_abertas,em_andamento)&order=data_hora_largada', {
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1bnZlcWh2aHZxaHRoeWx0d3BnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzUyOTMsImV4cCI6MjA5NDk1MTI5M30.Isqx_fip83FPTgzlto8ytWX5d_0iyEkwBQfW7SuSFfk',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1bnZlcWh2aHZxaHRoeWx0d3BnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzUyOTMsImV4cCI6MjA5NDk1MTI5M30.Isqx_fip83FPTgzlto8ytWX5d_0iyEkwBQfW7SuSFfk'
+      }
+    });
+    const provas = await res.json();
+    const grid = document.getElementById('provas-grid');
+    if (!provas || !provas.length) {
+      grid.innerHTML = '<div style="color:#888;font-size:13px;letter-spacing:2px">NENHUMA PROVA DISPONÍVEL NO MOMENTO</div>';
+      return;
+    }
+    const prova5k = provas.find(p => p.distancia === 5);
+    const prova10k = provas.find(p => p.distancia === 10);
+    grid.innerHTML = '';
+    [prova5k, prova10k].filter(Boolean).forEach(p => {
+      const dt = new Date(p.data_hora_largada);
+      const dia = dt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+      const hora = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const card = document.createElement('div');
+      card.className = 'prova-card';
+      card.innerHTML = `
+        <div class="prova-badge">Inscrições abertas</div>
+        <div class="prova-dist">${p.distancia}K</div>
+        <div class="prova-name">${p.nome}</div>
+        <div class="prova-details">
+          <div class="prova-detail-item">
+            <div class="prova-detail-label">Data</div>
+            <div class="prova-detail-val">${dia}</div>
+          </div>
+          <div class="prova-detail-item">
+            <div class="prova-detail-label">Largada</div>
+            <div class="prova-detail-val">${hora}</div>
+          </div>
+          <div class="prova-detail-item">
+            <div class="prova-detail-label">Inscrições</div>
+            <div class="prova-detail-val">Abertas</div>
+          </div>
+        </div>
+        <a href="/app.html" class="prova-btn">Inscreva-se</a>`;
+      grid.appendChild(card);
+    });
+  } catch(e) {
+    console.error('Erro ao carregar provas:', e);
+  }
+})();
+</script>
 
 <div class="divider"></div>
 
