@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIRTUA — Case · Ítalo Melo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#111111; --ink:#1a1a1a; --card:#1d1d1d; --line:#2a2a2a;
+    --neon:#C8F000; --off:#F0F0EB; --mute:#8d8d86;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--black);color:var(--off);font-family:"Barlow",system-ui,sans-serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  img,video{display:block;width:100%;height:auto}
+  a{color:inherit}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+  .label{font-family:"Barlow Condensed",sans-serif;font-weight:600;letter-spacing:.32em;text-transform:uppercase;font-size:13px;color:var(--neon);display:flex;align-items:center;gap:14px}
+  .label::before{content:"";width:36px;height:1px;background:currentColor}
+  h1,h2,h3{font-family:"Anton",sans-serif;font-weight:400;text-transform:uppercase;line-height:.95;letter-spacing:.005em}
+  h2{font-size:clamp(44px,6.4vw,88px);margin-top:18px}
+  h2 em{font-style:normal;color:var(--neon)}
+  p.lead{font-size:clamp(18px,1.6vw,21px);color:#cfcfc8;max-width:640px;margin-top:24px}
+  section{padding:120px 0}
+
+  /* nav */
+  nav{position:fixed;inset:0 0 auto 0;z-index:10;background:linear-gradient(#111111f0,#11111100);padding:22px 0}
+  nav .wrap{display:flex;justify-content:space-between;align-items:center}
+  .brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.28em;font-size:14px;text-transform:uppercase}
+  .brand b{color:var(--neon);font-weight:700}
+  .pill{font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:13px;background:var(--neon);color:var(--black);padding:12px 22px;border-radius:999px;text-decoration:none;white-space:nowrap}
+  .pill.ghost{background:transparent;color:var(--off);border:1px solid #3a3a3a}
+
+  /* hero */
+  .hero{padding:150px 0 0}
+  .hero h1{font-size:clamp(64px,11vw,168px);margin-top:18px}
+  .hero h1 span{color:var(--neon)}
+  .cover{margin-top:72px}
+  .cover img{width:100%;aspect-ratio:16/9;object-fit:cover}
+  .meta{display:flex;flex-wrap:wrap;gap:40px;margin-top:36px;border-top:1px solid #333;padding-top:24px}
+  .meta div small{display:block;font-family:"Barlow Condensed",sans-serif;letter-spacing:.28em;text-transform:uppercase;font-size:12px;color:var(--mute)}
+  .meta div strong{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:600}
+
+  /* intro */
+  .intro .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:start}
+  .role{background:var(--card);border-radius:18px;padding:36px;border:1px solid var(--line)}
+  .role h3{font-size:28px;margin-bottom:18px}
+  .role ul{list-style:none}
+  .role li{padding:12px 0 12px 26px;border-bottom:1px solid var(--line);position:relative;color:#d8d8d1}
+  .role li:last-child{border:0}
+  .role li::before{content:"";position:absolute;left:0;top:21px;width:9px;height:9px;border-radius:50%;background:var(--neon)}
+
+  /* media */
+  .shot{border-radius:16px;overflow:hidden;background:#000}
+  .full{margin-top:56px}
+  .green{background:var(--neon);color:var(--black)}
+  .green .label{color:var(--black)}
+  .green p.lead{color:#2a2a10}
+  .green h2 em{color:var(--black);-webkit-text-stroke:0;background:var(--black);color:var(--neon);padding:0 .12em}
+
+  /* journey */
+  .steps{display:grid;gap:96px;margin-top:72px}
+  .step{display:grid;grid-template-columns:320px 1fr;gap:48px;align-items:center}
+  .step .num{font-family:"Anton",sans-serif;font-size:96px;line-height:.9;color:var(--neon)}
+  .step h3{font-size:36px;margin:10px 0 12px}
+  .step p{color:#c4c4bd}
+
+  /* badges */
+  .badges .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .route{position:relative;display:grid;gap:18px}
+  .cp{display:flex;gap:20px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px}
+  .medal{flex:0 0 64px;height:64px;border-radius:50%;display:grid;place-items:center;border:3px solid var(--neon);font-family:"Anton",sans-serif;font-size:24px;color:var(--neon);position:relative}
+  .medal::after{content:"";position:absolute;inset:6px;border-radius:50%;border:1px dashed #C8F00066}
+  .cp.got .medal{background:var(--neon);color:var(--black)}
+  .cp.got .medal::after{border-color:#11111155}
+  .cp small{display:block;font-family:"Barlow Condensed",sans-serif;letter-spacing:.26em;text-transform:uppercase;font-size:12px;color:var(--mute)}
+  .cp strong{font-family:"Barlow Condensed",sans-serif;font-size:21px;font-weight:600}
+  .cp .tag{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-weight:700;letter-spacing:.2em;font-size:11px;text-transform:uppercase;padding:6px 12px;border-radius:999px;border:1px solid #3a3a3a;color:var(--mute);white-space:nowrap}
+  .cp.got .tag{background:var(--neon);color:var(--black);border-color:var(--neon)}
+  .feat{list-style:none;margin-top:32px;display:grid;gap:14px}
+  .feat li{padding-left:28px;position:relative;color:#d0d0c9}
+  .feat li::before{content:"";position:absolute;left:0;top:10px;width:10px;height:10px;border-radius:50%;background:var(--neon)}
+
+  /* stack */
+  .stack{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:48px}
+  .stack div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .stack strong{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:600;display:block}
+  .stack span{font-size:14px;color:var(--mute)}
+
+  footer{padding:120px 0 64px;border-top:1px solid var(--line)}
+  footer h2{font-size:clamp(48px,8vw,120px)}
+  .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:40px}
+  .sign{margin-top:80px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--mute);font-family:"Barlow Condensed",sans-serif;letter-spacing:.2em;text-transform:uppercase;font-size:13px}
+
+  @media (max-width:900px){
+    .wrap{padding:0 22px}
+    section{padding:84px 0}
+    .intro .grid,.badges .grid{grid-template-columns:1fr;gap:40px}
+    .step{grid-template-columns:1fr;gap:20px}
+    .stack{grid-template-columns:1fr 1fr}
+    nav .ghost{display:none}
+    .meta{gap:24px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><b>VIRTUA</b> · Case</div>
+    <div style="display:flex;gap:10px">
+      <a class="pill ghost" href="#badges">Badges</a>
+      <a class="pill" href="https://virtua.run" target="_blank" rel="noopener">virtua.run ↗</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="label">Case · Running · Produto e experiência</div>
+    <h1>Corra de<br><span>todo lugar.</span></h1>
+    <p class="lead">VIRTUA é uma plataforma de corridas virtuais sincronizadas: corredores em cidades diferentes largam no mesmo segundo e disputam um ranking ao vivo.</p>
+    <div class="meta">
+      <div><small>Papel</small><strong>Criador · Produto, marca e operação</strong></div>
+      <div><small>Formato</small><strong>5K e 10K virtuais</strong></div>
+      <div><small>Onde</small><strong>virtua.run</strong></div>
+    </div>
+  </div>
+  <div class="cover"><img src="assets/img1.jpg" alt="Corredores em movimento com o símbolo da VIRTUA"></div>
+</header>
+
+<section class="intro">
+  <div class="wrap grid">
+    <div>
+      <div class="label">A ideia</div>
+      <h2>Correr sozinho,<br><em>largar junto.</em></h2>
+      <p class="lead">Corrida virtual costuma ser só "corra quando quiser e mande o print". A VIRTUA traz de volta o que faz a prova de rua ser prova: hora marcada, número de peito, adversário logo atrás e medalha na chegada. Isso vale pra quem corre na rua, no parque ou na esteira.</p>
+    </div>
+    <div class="role">
+      <h3>O que eu fiz</h3>
+      <ul>
+        <li>Conceito, nome e identidade visual da marca</li>
+        <li>Jornada do corredor, da inscrição à medalha</li>
+        <li>Landing page, app web e e-mails da prova</li>
+        <li>Ranking ao vivo e largada sincronizada</li>
+        <li>Teste em prova real de 5K e ajustes de experiência</li>
+        <li>Extensão para ativação de marca com badges por GPS</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap full">
+    <div class="shot">
+      <video src="assets/5k.mp4" poster="assets/5k-poster.jpg" autoplay muted loop playsinline></video>
+    </div>
+  </div>
+</section>
+
+<section class="green">
+  <div class="wrap">
+    <div class="label">Jornada do corredor</div>
+    <h2>Escolha.<br>Inscreva-se. <em>Corra.</em></h2>
+    <p class="lead">Cada ponto de contato foi pensado como numa prova presencial, mas sem sair de casa.</p>
+    <div class="full shot"><img src="assets/img6.jpg" alt="Seção Como funciona: escolha a prova, inscreva-se, corra de onde estiver, receba sua medalha"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="label">Ponta a ponta</div>
+    <h2>Da inscrição<br>à <em>medalha.</em></h2>
+
+    <div class="steps">
+      <div class="step">
+        <div>
+          <div class="num">01</div>
+          <h3>Escolha a distância</h3>
+          <p>As provas de 5K e 10K vêm com data, horário de largada e status das inscrições, tudo puxado em tempo real.</p>
+        </div>
+        <div class="shot"><img src="assets/img2.jpg" alt="Tela de escolha de provas 5K e 10K"></div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="num">02</div>
+          <h3>Número de peito no e-mail</h3>
+          <p>A inscrição confirmada gera o número de peito na hora (5001 em diante no 5K, 1001 no 10K) e manda as instruções para o dia da prova.</p>
+        </div>
+        <div class="shot"><img src="assets/img3.jpg" alt="E-mail de inscrição confirmada com número de peito 5001"></div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="num">03</div>
+          <h3>Sala de espera</h3>
+          <p>Uma contagem regressiva ao vivo mostra os inscritos e o GPS ativo. No zero, a largada é automática e todo mundo sai junto.</p>
+        </div>
+        <div class="shot"><img src="assets/img5.jpg" alt="Sala de espera com contagem regressiva para a largada"></div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="num">04</div>
+          <h3>Ranking ao vivo</h3>
+          <p>Distância, pace e posição atualizam segundo a segundo. O corredor sente a pressão de quem está logo atrás, mesmo estando a quilômetros dele.</p>
+        </div>
+        <div class="shot"><img src="assets/img4.jpg" alt="Painel ao vivo com km percorridos, pace e ranking"></div>
+      </div>
+
+      <div class="step">
+        <div>
+          <div class="num">05</div>
+          <h3>Medalha na chegada</h3>
+          <p>Ao cruzar a linha, o corredor recebe a medalha digital e a colocação final por e-mail, prontas pra compartilhar.</p>
+        </div>
+        <div class="shot"><img src="assets/img7.jpg" alt="E-mail de medalha com colocação final"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="badges" id="badges" style="background:var(--ink)">
+  <div class="wrap grid">
+    <div>
+      <div class="label">Ativação de marca · Corrida dos Parques</div>
+      <h2>Badges<br>no <em>percurso.</em></h2>
+      <p class="lead">A tecnologia da VIRTUA virou uma experiência gamificada para um treino de rua em Recife. O corredor segue a rota e desbloqueia badges ao chegar em cada ponto, validado por GPS.</p>
+      <ul class="feat">
+        <li>Coleta em ordem: cada badge libera o próximo ponto</li>
+        <li>Check de localização por GPS e badge que aparece na câmera</li>
+        <li>Patrocinador integrado como checkpoint da rota</li>
+        <li>Medalha digital liberada só depois do 4º badge, pra guardar o momento da recompensa</li>
+        <li>Uma medalha por corredor, sem envio duplicado</li>
+      </ul>
+    </div>
+    <div class="route" aria-label="Rota de badges">
+      <div class="cp got"><div class="medal">01</div><div><small>Checkpoint</small><strong>Igreja N. Sra. da Saúde</strong></div><span class="tag">Coletado</span></div>
+      <div class="cp got"><div class="medal">02</div><div><small>Checkpoint</small><strong>Jardim do Poço</strong></div><span class="tag">Coletado</span></div>
+      <div class="cp"><div class="medal">03</div><div><small>Checkpoint</small><strong>Praça Antônio Maria</strong></div><span class="tag">Próximo</span></div>
+      <div class="cp"><div class="medal">04</div><div><small>Patrocinador</small><strong>Parque Santana</strong></div><span class="tag">Bloqueado</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="label">Bastidores</div>
+    <h2>Feito do zero,<br><em>no ar.</em></h2>
+    <p class="lead">Do conceito ao produto publicado com domínio próprio: banco de dados em tempo real, e-mails transacionais automáticos e deploy contínuo.</p>
+    <div class="stack">
+      <div><strong>Supabase</strong><span>Dados e ranking em tempo real</span></div>
+      <div><strong>Resend</strong><span>E-mails de inscrição e medalha</span></div>
+      <div><strong>Vercel</strong><span>Hospedagem e deploy</span></div>
+      <div><strong>GPS / Bluetooth</strong><span>Rua, parque ou esteira</span></div>
+      <div><strong>Claude</strong><span>Copiloto de desenvolvimento</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="label">Ítalo Melo · Marketing esportivo</div>
+    <h2>Bora<br><em style="color:var(--neon);font-style:normal">correr?</em></h2>
+    <div class="cta">
+      <a class="pill" href="https://virtua.run" target="_blank" rel="noopener">Conhecer a VIRTUA ↗</a>
+      <a class="pill ghost" href="https://wa.me/5581997814131" target="_blank" rel="noopener">(81) 99781-4131</a>
+      <span class="pill ghost" style="text-transform:none;letter-spacing:.04em">italorodrigomelo@gmail.com</span>
+    </div>
+    <div class="sign"><span>VIRTUA · Corrida virtual sincronizada</span><span>Recife · 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>
